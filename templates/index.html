@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Обзор проектов{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="eyebrow-line"></span> ПРОСТРАНСТВО ДЛЯ ТВОЕГО КОДА</div>
+    <h1>Твои идеи.<br><span>Твой код.</span> Твой темп.</h1>
+    <p class="hero-description">Храни исходный код, собирай проекты в одном месте и возвращайся к работе в любой момент.</p>
+    <div class="hero-actions">
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('create_repository') }}" class="button button-primary button-large">＋ Новый репозиторий</a>
+      {% else %}
+        <a href="{{ url_for('register') }}" class="button button-primary button-large">Начать работу <span>↗</span></a>
+        <a href="{{ url_for('login') }}" class="button button-ghost button-large">У меня есть аккаунт</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-art">
+    <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+    <div class="code-window">
+      <div class="window-top"><div class="window-dots"><i></i><i></i><i></i></div><span>your-project.py</span><span class="window-status">● SAVED</span></div>
+      <div class="code-lines">
+        <div><b>01</b><span class="code-purple">def</span> <span class="code-blue">build_idea</span>():</div>
+        <div><b>02</b>&nbsp;&nbsp;&nbsp;&nbsp;project = <span class="code-green">"something great"</span></div>
+        <div><b>03</b>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-purple">return</span> project</div>
+        <div><b>04</b></div>
+        <div><b>05</b> <span class="code-muted"># ready when you are</span></div>
+        <div><b>06</b> <span class="code-blue">build_idea</span>()<span class="cursor"></span></div>
+      </div>
+      <div class="window-bottom"><span><i></i> main</span><span>UTF-8</span><span>Python</span></div>
+    </div>
+    <div class="floating-tag tag-top"> <span>✳</span> YOUR WORKSPACE</div>
+    <div class="floating-tag tag-bottom"><span class="tag-pulse"></span> Всё под контролем</div>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <div class="stat-card"><span class="stat-icon">⌘</span><div><strong>{{ stats.repositories }}</strong><small>Репозиториев</small></div><span class="stat-caption">PROJECTS</span></div>
+  <div class="stat-card"><span class="stat-icon">◉</span><div><strong>{{ stats.users }}</strong><small>Участников</small></div><span class="stat-caption">MEMBERS</span></div>
+  <div class="stat-card"><span class="stat-icon">↗</span><div><strong>{{ stats.files }}</strong><small>Файлов загружено</small></div><span class="stat-caption">FILES</span></div>
+</section>
+
+<section class="section-heading">
+  <div><div class="eyebrow"><span class="eyebrow-line"></span> БИБЛИОТЕКА</div><h2>Исследуй проекты<span class="red-dot">.</span></h2><p>Репозитории сообщества MiniGit</p></div>
+  <form class="search-form" method="get" action="{{ url_for('index') }}"><span>⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Найти проект или автора..."><button type="submit">Поиск</button></form>
+</section>
+
+{% if repositories %}
+<div class="repo-grid">
+  {% for repo in repositories %}
+  <a class="repo-card" href="{{ url_for('repository', repository_id=repo.id) }}">
+    <div class="repo-card-top"><span class="repo-symbol">{% if loop.index % 3 == 0 %}⌘{% elif loop.index % 3 == 1 %}◈{% else %}⌬{% endif %}</span><span class="repo-arrow">↗</span></div>
+    <h3>{{ repo.name }}</h3>
+    <p>{{ repo.description or 'Описание пока не добавлено.' }}</p>
+    <div class="repo-meta"><span><i class="tiny-dot"></i>{{ repo.username }}</span><span>▤ {{ repo.file_count }} файлов</span></div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><div class="empty-icon">⌁</div><h3>{% if search %}Ничего не найдено{% else %}Здесь начинается новый проект{% endif %}</h3><p>{% if search %}Попробуй изменить поисковый запрос.{% else %}Создай первый репозиторий и добавь в него файлы.{% endif %}</p>{% if session.get('user_id') and not search %}<a class="button button-primary" href="{{ url_for('create_repository') }}">Создать репозиторий</a>{% endif %}</div>
+{% endif %}
+{% endblock %}

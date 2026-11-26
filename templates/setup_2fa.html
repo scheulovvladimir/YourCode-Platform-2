@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Подключение 2FA</h1>
+
+    <p>1. Откройте Google Authenticator или Microsoft Authenticator.</p>
+    <p>2. Добавьте аккаунт вручную, выбрав тип ключа «На основе времени».</p>
+
+    <p>Ваш секретный ключ:</p>
+
+    <strong>{{ secret }}</strong>
+
+    <p>3. Введите полученный шестизначный код:</p>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <input
+            type="text"
+            name="code"
+            placeholder="000000"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            inputmode="numeric"
+            required
+        >
+
+        <button type="submit">Включить защиту</button>
+    </form>
+</div>
+{% endblock %}

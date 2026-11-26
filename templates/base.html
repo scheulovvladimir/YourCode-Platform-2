@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101114">
+  <title>{% block title %}ТвойКод{% endblock %} — ТвойКод</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="brand-mark"><span></span><span></span><span></span></span>
+      <span>Твой<span class="brand-accent">Код</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="{{ url_for('index') }}" class="nav-link">Обзор</a>
+      {% if session.get('user_id') %}
+  <a href="{{ url_for('create_repository') }}" class="nav-link">Создать проект</a>
+  <a href="{{ url_for('setup_2fa') }}" class="nav-link">Настроить 2FA</a>
+{% endif %}
+    </nav>
+    <div class="nav-actions">
+      {% if session.get('user_id') %}
+        <span class="user-chip"><span class="online-dot"></span>{{ session.get('username') }}</span>
+        <form action="{{ url_for('logout') }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button button-ghost button-small">Выйти</button></form>
+      {% else %}
+        <a class="button button-ghost button-small" href="{{ url_for('login') }}">Войти</a>
+        <a class="button button-primary button-small" href="{{ url_for('register') }}">Регистрация <span>↗</span></a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="page-shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-stack">
+        {% for category, message in messages %}<div class="flash flash-{{ category }}">{{ message }}<button type="button" aria-label="Закрыть" onclick="this.parentElement.remove()">×</button></div>{% endfor %}
+      </div>{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer"><span>проверка 123</span><span>Создавай. Сохраняй. Развивай.</span><span>© {{ current_year }}</span></footer>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
